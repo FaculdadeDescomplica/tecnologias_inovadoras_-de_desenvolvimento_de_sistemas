@@ -1,0 +1,34 @@
+variables:
+    APP_PATH: springbootapi
+    DOCKER_TAG_NAME: $APP_PATH:latest
+
+stages:
+    - test
+    - prebuild
+    - build
+
+Testes_Unitarios:
+    stage: test
+    image: maven:3.8.5-openjdk-17-slim
+    script:
+        - cd $APP_PATH
+        - mvn test
+
+Limpar_Imagem:
+    stage: prebuild
+    variables:
+        GIT_STRATEGY: none
+    script: 
+        - docker container stop $(docker container ls -a -f ancestor=$DOCKER_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de parada de container. Falhou? - $FAILED
+        - FAILED=false
+        - docker container rm $(docker container ls -a -f ancestor=$DOCKER_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de remoção de container. Falhou? - $FAILED 
+        - FAILED=false
+        - docker image rm $DOCKER_TAG_NAME || FAILED=true
+        - echo Tentativa de remoção da image. Falhou? - $FAILED
+
+Criar_Imagem:
+    stage: build
+    script:
+        - docker build --no-cache -t $DOCKER_TAG_NAME ./$APP_PATH

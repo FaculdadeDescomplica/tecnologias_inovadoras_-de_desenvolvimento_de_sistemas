@@ -1,0 +1,58 @@
+variables:
+    APP_PATH: springbootapi
+    DOCKER_TAG_NAME: $APP_PATH:latest
+
+stages:
+    - test
+    - prebuild
+    - build
+    - deploy
+
+Testes_Unitarios:
+    stage: test
+    artifacts:
+        paths:
+            - $APP_PATH/target/surefire-reports/
+    cache:
+        paths:
+            - $APP_PATH
+    image: maven:3.8.5-openjdk-17-slim
+    script:
+        - cd $APP_PATH
+        - mvn test
+
+Limpar_Imagem:
+    stage: prebuild
+    dependencies: []
+    cache: []
+    variables:
+        GIT_STRATEGY: none
+    script: 
+        - docker container stop $(docker container ls -a -f ancestor=$DOCKER_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de parada de container. Falhou? - $FAILED
+        - FAILED=false
+        - docker container rm $(docker container ls -a -f ancestor=$DOCKER_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de remoção de container. Falhou? - $FAILED 
+        - FAILED=false
+        - docker image rm $DOCKER_TAG_NAME || FAILED=true
+        - echo Tentativa de remoção da image. Falhou? - $FAILED
+
+Criar_Imagem:
+    stage: build
+    dependencies: []
+    cache:
+        paths:
+            - $APP_PATH
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - docker build --no-cache -t $DOCKER_TAG_NAME ./$APP_PATH
+
+Criar_Container:
+    stage: deploy
+    dependencies: []
+    cache: []
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - docker run --name MeuSpringBootAPI --network MinhaRede -p 8080:8080 -d $DOCKER_TAG_NAME

@@ -1,0 +1,12 @@
+stages:
+    - deploy
+
+Implantacao_Nginx:
+    stage: deploy
+    script:
+        docker run -d --name Nginx_teste -p 3080:80 nginx:latest
+
+Implantacao_Nginx_2:
+    stage: deploy
+    script:
+        docker run -d --name Nginx_teste_2 -p 3180:80 nginx:latest

@@ -1,0 +1,12 @@
+variables:
+    APP_PATH: springbootapi
+
+stages:
+    - test
+
+Testes_Unitarios:
+    stage: test
+    image: maven:3.8.5-openjdk-17-slim
+    script:
+        - cd $APP_PATH
+        - mvn test

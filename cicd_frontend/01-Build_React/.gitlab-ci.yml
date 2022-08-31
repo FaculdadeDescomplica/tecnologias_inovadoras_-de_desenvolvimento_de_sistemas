@@ -1,0 +1,43 @@
+variables:
+    APP_PATH: reactsite
+    DOCKER_TAG_NAME: $APP_PATH:latest
+    NOME_DO_CONTAINER: MeuReactSite
+    NOME_DA_REDE: MinhaRede
+    BIND_DE_PORTA: 3000:3000
+
+stages:
+    - prebuild
+    - build
+    - deploy
+
+Limpar_Imagem:
+    stage: prebuild
+    only:
+      - /^release_[0-9]+(?:.[0-9]+)+$/
+    variables:
+        GIT_STRATEGY: none
+    script: 
+        - docker container stop $(docker container ls -a -f ancestor=$DOCKER_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de parada de container. Falhou? - $FAILED
+        - FAILED=false
+        - docker container rm $(docker container ls -a -f ancestor=$DOCKER_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de remoção de container. Falhou? - $FAILED 
+        - FAILED=false
+        - docker image rm $DOCKER_TAG_NAME || FAILED=true
+        - echo Tentativa de remoção da image. Falhou? - $FAILED
+
+Criar_Imagem:
+    stage: build
+    only:
+      - /^release_[0-9]+(?:.[0-9]+)+$/
+    script:
+        - docker build --no-cache -t $DOCKER_TAG_NAME ./$APP_PATH
+
+Criar_Container:
+    stage: deploy
+    only:
+      - /^release_[0-9]+(?:.[0-9]+)+$/
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -p $BIND_DE_PORTA -d $DOCKER_TAG_NAME

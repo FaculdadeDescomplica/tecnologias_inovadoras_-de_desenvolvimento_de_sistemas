@@ -1,0 +1,65 @@
+variables:
+    IMAGEM_MYSQL: mysql:latest
+    BIND_DE_PORTA: 3306:3306
+    PASTA_ORIGEM_VOLUME: /D/docker/volumes/mysql
+    NOME_DA_REDE: MinhaRede
+    NOME_DO_CONTAINER: MeuMySQL
+    CONTAINER_ATIVO: falso
+    CONTAINER_EXISTE: falso
+
+stages:
+    - deploy
+    - start
+
+before_script:
+    - RUNNING_CONTAINER_ID=$(docker container ls -f name=$NOME_DO_CONTAINER -f status=running -q)
+    - if [[ -z $RUNNING_CONTAINER_ID ]]; then
+    -   CONTAINER_ATIVO=falso;
+    -   else CONTAINER_ATIVO=verdadeiro;CONTAINER_EXISTE=verdadeiro;
+    - fi
+    - if [[ $CONTAINER_ATIVO = "falso" ]]; then
+    -   CONTAINER_ID=$(docker container ls -f name=$NOME_DO_CONTAINER -a -q)
+    -   if [[ -z $CONTAINER_ID ]]; then
+    -     CONTAINER_EXISTE=falso
+    -     else CONTAINER_EXISTE=verdadeiro
+    -   fi
+    - fi
+
+Implantacao_MySQL:
+    stage: deploy
+    only:
+      - /^release_[0-9]+(?:.[0-9]+)+$/
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - if [[ $CONTAINER_EXISTE = "falso" ]]; then
+        -   docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -v $PASTA_ORIGEM_VOLUME:/var/lib/mysql -p $BIND_DE_PORTA -e MYSQL_ROOT_PASSWORD=$mysqlrootpassword -e MYSQL_USER=$mysqluser -e MYSQL_PASSWORD=$mysqluserpassword -d $IMAGEM_MYSQL
+        -   else echo "Container não precisa ser criado"
+        - fi
+
+Ligar_Container:
+    stage: start
+    except:
+      - main
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - if [[ -z $RUNNING_CONTAINER_ID ]]; then
+        -   CONTAINER_ID=$(docker container ls -f name=$NOME_DO_CONTAINER -a -q)
+        -   if [[ -z $CONTAINER_ID ]]; then
+        -     CONTAINER_EXISTE=falso
+        -     else CONTAINER_EXISTE=verdadeiro
+        -   fi
+        -   if [[ $CONTAINER_EXISTE = "verdadeiro" ]]; then
+        -     docker start $NOME_DO_CONTAINER
+        -     RUNNING_CONTAINER_ID=$(docker container ls -f name=$NOME_DO_CONTAINER -f status=running -q)
+        -   fi
+        -   else echo "Container não precisa ser iniciado"
+        - fi
+
+after_script:
+    - RUNNING_CONTAINER_ID=$(docker container ls -f name=$NOME_DO_CONTAINER -f status=running -q)
+    - if [[ -n $RUNNING_CONTAINER_ID ]]; then
+    -   echo "Id do Container=$RUNNING_CONTAINER_ID"
+    -   else "Sem container ativo"
+    - fi

@@ -1,0 +1,23 @@
+stages:
+    - teste
+    - deploy
+
+Teste_Imagem:
+    stage: teste
+    image: ubuntu:21.10
+    script:
+        - apt-get update
+        - apt-get install -y nginx
+        - apt-get clean
+        - rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+        - echo "daemon off;" >> /etc/nginx/nginx.conf
+
+Implantacao_Nginx:
+    stage: deploy
+    script:
+        docker run -d --name Nginx_teste -p 3080:80 nginx:latest
+
+Implantacao_Nginx_2:
+    stage: deploy
+    script:
+        docker run -d --name Nginx_teste_2 -p 3180:80 nginx:latest
