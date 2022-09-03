@@ -1,35 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import getMusicas from '../api/MusicasApi.js';
-import List from 'react-list-select';
+import SpringApiUrl from '../api/SpringApiUrl';
 
-const ListaMusicas = () => {
-    const [listaState, setListaState] = useState({
-        repos: [],
-        });
+const ListaMusicas = ({ urlAlbum }) => {
+    const [musicas, setMusicas] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
-        getMusicas('1').then((response) => {
-            setListaState({ repos: response });
-        });
-        }, [setListaState]);
+        const fetchData = async () => {
+            setLoading(true);
 
-    function composite(musica) {
-        return (
-            <div className="musica">
-                <div className="nomeMusica">{musica.nome}</div>
-                <div className="duracao">{musica.duracao}</div>
-            </div>
-        )
-    }
+            try {
+                if (urlAlbum !== undefined) {
+                    const response = await fetch(SpringApiUrl('/musicas' + urlAlbum));
+                    const jsonResponse = await response.json();
+                    setMusicas(jsonResponse);
+                    
+                    setError(null);
+                } else {
+                    setMusicas(undefined);
+                };
+            } catch (error) {
+                console.log(error.message);
+                setError("Houve um erro ao carregar os dados!");
+            }
 
-    let items = listaState.repos.map((musica) => {
-        return composite(musica);
-    })
+            setLoading(false);
+        };
+
+        fetchData();
+    }, [urlAlbum]);
 
     return (
-        <div className="musicas">
+        <div id="musica">
             <h3>Músicas</h3>
-            <List name="listaMusicas" items={items} />
+            {loading && <p>Carregando músicas...</p>}
+            <ul>
+                {musicas && musicas.map((musica) => (
+                    <li key={musica.id} id={musica.id}>
+                        {musica.nome}<br/>
+                        Duração: {musica.duracao}
+                    </li>
+                ))}
+            </ul>
         </div>
     )
 };
