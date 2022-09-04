@@ -22,7 +22,7 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
         httpConfig(null, "GET", e.target.id);
     };
 
-    const onChangeArtista = (e) => {
+    const onChangeArtistaNome = (e) => {
         setNome(e.target.value);
     }
 
@@ -38,7 +38,7 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
             const novoArtista = {
                 nome,
             };
-            
+
             httpConfig(novoArtista, "PUT", artista.id);
         }
     }
@@ -65,7 +65,7 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
                 <input 
                     type="text"
                     value={nome}
-                    onChange={onChangeArtista}/>
+                    onChange={onChangeArtistaNome}/>
                 <button onClick={adicionarArtista}>Adicionar</button>
                 <button onClick={alterarArtista}>Alterar</button>
                 <button onClick={excluirArtista}>Excluir</button>
