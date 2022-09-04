@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import SpringApiUrl from '../api/SpringApiUrl';
 
-export const useFetch = (rota) => {
+export const useFetch = (rota, queryParam) => {
+  const [url, setUrl] = useState("");
   const [data, setData] = useState(null);
   const [dataItem, setDataItem] = useState(null);
 
@@ -10,8 +11,6 @@ export const useFetch = (rota) => {
   const [callFetch, setCallFetch] = useState(false);
 
   const [loading, setLoading] = useState(false);
-
-  const [error, setError] = useState(false);
 
   const [itemId, setItemId] = useState(null);
 
@@ -34,6 +33,7 @@ export const useFetch = (rota) => {
       setMethod("GET");
       setItemId(id);
     } else if (method === "PUT") {
+      console.log(data);
       setConfig({
         method: "PUT",
         headers: {
@@ -62,23 +62,28 @@ export const useFetch = (rota) => {
       setLoading(true);
 
       try {
-        const res = await fetch(SpringApiUrl(rota));
-
+        if (queryParam !== null)
+          setUrl(SpringApiUrl(rota + queryParam));
+        else
+          setUrl(SpringApiUrl(rota));
+        
+        const res = await fetch(url);
+        const status = await res.status;
         const json = await res.json();
-
-        setData(json);
+        
+        if (status === 200)
+          setData(json);
+        
         setMethod(null);
-        setError(null);
       } catch (error) {
         console.log(error.message);
-        setError("Houve um erro ao carregar os dados!");
       }
 
       setLoading(false);
     };
     
     fetchData();
-  }, [rota, callFetch]);
+  }, [rota, queryParam, url, callFetch]);
   
   useEffect(() => {
     const httpRequest = async () => {
@@ -92,6 +97,7 @@ export const useFetch = (rota) => {
 
           const json = await res.json();
 
+          setDataItem(json);
           setCallFetch(json);
         } else if (method === "GET") {
           const getUrl = `${SpringApiUrl(rota)}/${itemId}`;
@@ -113,6 +119,7 @@ export const useFetch = (rota) => {
 
           const json = await res.json();
 
+          setDataItem(json);
           setCallFetch(json);
         } else if (method === "DELETE") {
           const deleteUrl = `${SpringApiUrl(rota)}/${itemId}`;
@@ -126,16 +133,14 @@ export const useFetch = (rota) => {
         }
 
         setMethod(null);
-        setError(null);
         setLoading(false);
       } catch (error) {
         console.log(error.message);
-        setError("Houve um erro ao carregar os dados!");
       }
     };
     
     httpRequest();
-  }, [config]);
+  }, [itemId, method, rota, config]);
 
-  return { data, dataItem, httpConfig, loading, error };
+  return { data, dataItem, httpConfig, loading };
 };

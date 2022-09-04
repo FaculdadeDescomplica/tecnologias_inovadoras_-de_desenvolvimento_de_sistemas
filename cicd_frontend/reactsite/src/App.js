@@ -6,23 +6,23 @@ import './App.css';
 
 function App() {
 
-  const[urlArtista, setUrlArtista] = useState();
-  const[urlAlbum, setUrlAlbum] = useState();
+  const[idArtista, setIdArtista] = useState();
+  const[idAlbum, setIdAlbum] = useState();
   
   const handleArtista = (artista) => {
-    setUrlArtista(artista);
+    setIdArtista(artista);
   }
 
   const handleAlbum = (album) => {
-    setUrlAlbum(album);
+    setIdAlbum(album);
   }
 
   return (
     <div className="App">
       <div className='App-Content'>
           <ListaArtistas handleArtista={handleArtista} handleAlbum={handleAlbum}/>
-          <ListaAlbuns urlArtista={urlArtista} handleAlbum={handleAlbum}/>
-          <ListaMusicas urlAlbum={urlAlbum}/>
+          <ListaAlbuns idArtista={idArtista} handleAlbum={handleAlbum}/>
+          <ListaMusicas idAlbum={idAlbum}/>
       </div>
     </div>
   );

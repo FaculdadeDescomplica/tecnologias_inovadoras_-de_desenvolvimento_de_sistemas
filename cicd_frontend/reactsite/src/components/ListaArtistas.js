@@ -2,21 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useFetch } from "../hooks/useFetch";
 
 const ListaArtistas = ({ handleArtista, handleAlbum }) => {
-    const { data: artistas, dataItem: artista, httpConfig, loading, error } = useFetch("/artistas");
-    const [nome, setNome] = useState("");
+    const { data: artistas, dataItem: artista, httpConfig, loading } = useFetch("/artistas", null);
+    const [nome, setNome] = useState();
     
     useEffect(() => {
         const fetchData = async () => {
             if (artista !== null) {
                 setNome(artista.nome);
-                handleArtista("?idArtista=" + artista.id);
+                handleArtista(artista.id);
                 handleAlbum(undefined);
             } else
                 setNome("");
         };
 
         fetchData();
-    }, [artista]);
+    }, [handleArtista, handleAlbum, artista]);
 
     const selecionaArtista = (e) => {
         httpConfig(null, "GET", e.target.id);
@@ -66,6 +66,7 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
                     type="text"
                     value={nome}
                     onChange={onChangeArtistaNome}/>
+                <br/>
                 <button onClick={adicionarArtista}>Adicionar</button>
                 <button onClick={alterarArtista}>Alterar</button>
                 <button onClick={excluirArtista}>Excluir</button>

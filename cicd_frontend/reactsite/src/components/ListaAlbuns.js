@@ -1,40 +1,63 @@
 import React, { useState, useEffect } from 'react';
-import SpringApiUrl from '../api/SpringApiUrl';
+import { useFetch } from "../hooks/useFetch";
 
-const ListaAlbuns = ({ urlArtista, handleAlbum }) => {
-    const [albuns, setAlbuns] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
-    const [albumSelecionado, setAlbumSelecionado] = useState();
-
+const ListaAlbuns = ({ idArtista, handleAlbum }) => {
+    const { data: albuns, dataItem: album, httpConfig, loading } = useFetch("/albuns", "?idArtista=" + idArtista);
+    const [nome, setNome] = useState();
+    const [ano, setAno] = useState();
+    
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true);
-
-            try {
-                if (urlArtista !== undefined) {
-                    const response = await fetch(SpringApiUrl('/albuns' + urlArtista));
-                    const jsonResponse = await response.json();
-                    setAlbuns(jsonResponse);
-                    
-                    setError(null);
-                } else {
-                    setAlbuns(undefined);
-                };
-            } catch (error) {
-                console.log(error.message);
-                setError("Houve um erro ao carregar os dados!");
+            if (album !== null) {
+                setNome(album.nome);
+                setAno(album.ano);
+                handleAlbum(album.id);
+            } else {
+                setNome("");
+                setAno("");
             }
-
-            setLoading(false);
         };
 
         fetchData();
-    }, [urlArtista]);
+    }, [handleAlbum, album]);
 
     const selecionaAlbum = (e) => {
-        handleAlbum("?idAlbum=" + e.target.id);
+        httpConfig(null, "GET", e.target.id);
     };
+
+    const onChangeAlbumNome = (e) => {
+        setNome(e.target.value);
+    }
+
+    const onChangeAlbumAno = (e) => {
+        setAno(e.target.value);
+    }
+
+    const adicionarAlbum = () => {
+        const novoAlbum = {
+            nome,
+            ano,
+            idArtista,
+        };
+        httpConfig(novoAlbum, "POST", null);
+    }
+
+    const alterarAlbum = () => {
+        if (album !== null) {
+            const novoAlbum = {
+                nome,
+                ano,
+                idArtista,
+            };
+            
+            httpConfig(novoAlbum, "PUT", album.id);
+        }
+    }
+
+    const excluirAlbum = () => {
+        if (album !== null)
+            httpConfig(null, "DELETE", album.id);
+    }
 
     return (
         <div id="album">
@@ -48,6 +71,24 @@ const ListaAlbuns = ({ urlArtista, handleAlbum }) => {
                     </li>
                 ))}
             </ul>
+            <br/>
+            <div id="editarAlbum">
+                Album: 
+                <input 
+                    type="text"
+                    value={nome}
+                    onChange={onChangeAlbumNome}/>
+                <br/>
+                Ano:
+                <input 
+                    type="text"
+                    value={ano}
+                    onChange={onChangeAlbumAno}/>
+                <br/>
+                <button onClick={adicionarAlbum}>Adicionar</button>
+                <button onClick={alterarAlbum}>Alterar</button>
+                <button onClick={excluirAlbum}>Excluir</button>
+            </div>
         </div>
     )
 };
