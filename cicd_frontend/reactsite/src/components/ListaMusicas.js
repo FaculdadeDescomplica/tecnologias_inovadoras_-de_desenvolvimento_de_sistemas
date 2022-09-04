@@ -8,6 +8,17 @@ const ListaMusicas = ({ idAlbum }) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            if (musicas === null) {
+                setNome("");
+                setDuracao("");
+            }
+        };
+
+        fetchData();
+    }, [musicas]);
+
+    useEffect(() => {
+        const fetchData = async () => {
             if (musica !== null) {
                 setNome(musica.nome);
                 setDuracao(musica.duracao);

@@ -11,8 +11,11 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
                 setNome(artista.nome);
                 handleArtista(artista.id);
                 handleAlbum(undefined);
-            } else
+            } else {
                 setNome("");
+                handleArtista(undefined);
+                handleAlbum(undefined);
+            }
         };
 
         fetchData();

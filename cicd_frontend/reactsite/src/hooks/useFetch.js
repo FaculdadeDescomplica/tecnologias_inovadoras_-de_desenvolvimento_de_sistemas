@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import SpringApiUrl from '../api/SpringApiUrl';
 
 export const useFetch = (rota, queryParam) => {
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState();
   const [data, setData] = useState(null);
   const [dataItem, setDataItem] = useState(null);
 
-  const [config, setConfig] = useState(null);
-  const [method, setMethod] = useState(null);
+  const [config, setConfig] = useState();
+  const [method, setMethod] = useState();
   const [callFetch, setCallFetch] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
-  const [itemId, setItemId] = useState(null);
+  const [itemId, setItemId] = useState();
 
   const httpConfig = (data, method, id) => {
     if (method === "POST") {
@@ -60,24 +60,29 @@ export const useFetch = (rota, queryParam) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setData(null);
 
       try {
         if (queryParam !== null)
-          setUrl(SpringApiUrl(rota + queryParam));
+          if (!queryParam.includes("undefined"))
+            setUrl(SpringApiUrl(rota + queryParam));
+          else
+            setUrl(null);
         else
           setUrl(SpringApiUrl(rota));
         
-        const res = await fetch(url);
-        const status = await res.status;
-        const json = await res.json();
-        
-        if (status === 200)
-          setData(json);
-        
-        setMethod(null);
+        if (url !== null) {
+          const res = await fetch(url);
+          const status = await res.status;
+          const json = await res.json();
+          
+          if (status === 200)
+            setData(json);
+        }
       } catch (error) {
         console.log(error.message);
       }
+      setMethod(null);
 
       setLoading(false);
     };
@@ -128,7 +133,7 @@ export const useFetch = (rota, queryParam) => {
 
           const json = await res.status;
 
-          setDataItem(null);
+          setDataItem(undefined);
           setCallFetch(json);
         }
 
@@ -136,6 +141,7 @@ export const useFetch = (rota, queryParam) => {
         setLoading(false);
       } catch (error) {
         console.log(error.message);
+        setDataItem(undefined);
       }
     };
     

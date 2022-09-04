@@ -8,6 +8,19 @@ const ListaAlbuns = ({ idArtista, handleAlbum }) => {
     
     useEffect(() => {
         const fetchData = async () => {
+            if (albuns === null) {
+                setNome("");
+                setAno("");
+            }
+            
+            handleAlbum(undefined);
+        };
+
+        fetchData();
+    }, [idArtista, handleAlbum, albuns]);
+
+    useEffect(() => {
+        const fetchData = async () => {
             if (album !== null) {
                 setNome(album.nome);
                 setAno(album.ano);
@@ -15,6 +28,7 @@ const ListaAlbuns = ({ idArtista, handleAlbum }) => {
             } else {
                 setNome("");
                 setAno("");
+                handleAlbum(undefined);
             }
         };
 
