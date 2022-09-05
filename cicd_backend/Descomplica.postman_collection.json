@@ -107,7 +107,7 @@
 			"response": []
 		},
 		{
-			"name": "SpringBoot - DELETE - artistas/1",
+			"name": "SpringBoot - DELETE - artistas/{id}",
 			"request": {
 				"method": "DELETE",
 				"header": [],
