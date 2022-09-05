@@ -3,12 +3,13 @@ import { useFetch } from "../hooks/useFetch";
 
 const ListaMusicas = ({ idAlbum }) => {
     const { data: musicas, dataItem: musica, httpConfig, loading } = useFetch("/musicas", "?idAlbum=" + idAlbum);
-    const [nome, setNome] = useState();
-    const [duracao, setDuracao] = useState();
-
+    const [nome, setNome] = useState("");
+    const [duracao, setDuracao] = useState("");
+    
     useEffect(() => {
         const fetchData = async () => {
-            if (musicas === null) {
+            console.log(musicas);
+            if (musicas === null || musicas.length === 0) {
                 setNome("");
                 setDuracao("");
             }
@@ -19,6 +20,7 @@ const ListaMusicas = ({ idAlbum }) => {
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log(musica);
             if (musica !== null) {
                 setNome(musica.nome);
                 setDuracao(musica.duracao);

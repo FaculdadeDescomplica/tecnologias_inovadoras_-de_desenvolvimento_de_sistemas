@@ -3,17 +3,17 @@ import { useFetch } from "../hooks/useFetch";
 
 const ListaAlbuns = ({ idArtista, handleAlbum }) => {
     const { data: albuns, dataItem: album, httpConfig, loading } = useFetch("/albuns", "?idArtista=" + idArtista);
-    const [nome, setNome] = useState();
-    const [ano, setAno] = useState();
+    const [nome, setNome] = useState("");
+    const [ano, setAno] = useState("");
     
     useEffect(() => {
         const fetchData = async () => {
-            if (albuns === null) {
+            if (albuns === null || albuns.length === 0) {
                 setNome("");
                 setAno("");
             }
             
-            handleAlbum(undefined);
+            handleAlbum(null);
         };
 
         fetchData();
@@ -28,7 +28,7 @@ const ListaAlbuns = ({ idArtista, handleAlbum }) => {
             } else {
                 setNome("");
                 setAno("");
-                handleAlbum(undefined);
+                handleAlbum(null);
             }
         };
 

@@ -3,18 +3,18 @@ import { useFetch } from "../hooks/useFetch";
 
 const ListaArtistas = ({ handleArtista, handleAlbum }) => {
     const { data: artistas, dataItem: artista, httpConfig, loading } = useFetch("/artistas", null);
-    const [nome, setNome] = useState();
+    const [nome, setNome] = useState("");
     
     useEffect(() => {
         const fetchData = async () => {
             if (artista !== null) {
                 setNome(artista.nome);
                 handleArtista(artista.id);
-                handleAlbum(undefined);
+                handleAlbum(null);
             } else {
                 setNome("");
-                handleArtista(undefined);
-                handleAlbum(undefined);
+                handleArtista(null);
+                handleAlbum(null);
             }
         };
 

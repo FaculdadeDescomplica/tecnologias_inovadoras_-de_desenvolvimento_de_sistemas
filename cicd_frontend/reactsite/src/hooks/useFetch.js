@@ -13,7 +13,7 @@ export const useFetch = (rota, queryParam) => {
   const [loading, setLoading] = useState(false);
 
   const [itemId, setItemId] = useState();
-
+  
   const httpConfig = (data, method, id) => {
     if (method === "POST") {
       setConfig({
@@ -60,11 +60,10 @@ export const useFetch = (rota, queryParam) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setData(null);
 
       try {
         if (queryParam !== null)
-          if (!queryParam.includes("undefined"))
+          if (!queryParam.includes("null"))
             setUrl(SpringApiUrl(rota + queryParam));
           else
             setUrl(null);
@@ -81,6 +80,7 @@ export const useFetch = (rota, queryParam) => {
         }
       } catch (error) {
         console.log(error.message);
+        setData(null);
       }
       setMethod(null);
 
@@ -112,7 +112,7 @@ export const useFetch = (rota, queryParam) => {
           const res = await fetch(...fetchOptions);
 
           const json = await res.json();
-
+          
           setDataItem(json);
           setCallFetch(json);
         } else if (method === "PUT") {

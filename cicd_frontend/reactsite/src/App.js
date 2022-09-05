@@ -6,8 +6,8 @@ import './App.css';
 
 function App() {
 
-  const[idArtista, setIdArtista] = useState();
-  const[idAlbum, setIdAlbum] = useState();
+  const[idArtista, setIdArtista] = useState(null);
+  const[idAlbum, setIdAlbum] = useState(null);
   
   const handleArtista = (artista) => {
     setIdArtista(artista);
