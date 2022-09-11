@@ -35,7 +35,6 @@ public class AlbumServiceImpl implements AlbumService {
 	@Override
 	public AlbumEntity updateAlbum(Long id, AlbumModel newAlbum) {
 		validaArtista(newAlbum.getIdArtista());
-		validaAlbum(newAlbum.getIdArtista(), newAlbum.getNome());
 		AlbumEntity album = validaAlbum(id);
 		album.setNome(newAlbum.getNome());
 		album.setAno(newAlbum.getAno());

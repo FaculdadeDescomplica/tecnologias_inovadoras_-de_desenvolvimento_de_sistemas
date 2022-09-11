@@ -35,7 +35,6 @@ public class MusicaServiceImpl implements MusicaService {
 	@Override
 	public MusicaEntity updateMusica(Long id, MusicaModel newMusica) {
 		validaAlbum(newMusica.getIdAlbum());
-		validaMusica(newMusica.getIdAlbum(), newMusica.getNome());
 		MusicaEntity musica = validaMusica(id);
 		musica.setNome(newMusica.getNome());
 		musica.setDuracao(newMusica.getDuracao());
