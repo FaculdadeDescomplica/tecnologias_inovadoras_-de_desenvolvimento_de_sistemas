@@ -73,7 +73,7 @@ const ListaMusicas = ({ idAlbum }) => {
 
     return (
         <div id="musica">
-            <h3>Músicas</h3>
+            <h1>Músicas</h1>
             {loading && <p>Carregando músicas...</p>}
             <ul>
                 {musicas && musicas.map((musica) => (
@@ -85,18 +85,19 @@ const ListaMusicas = ({ idAlbum }) => {
             </ul>
             <br/>
             <div id="editarMusica">
-                Música: 
-                <input 
-                    type="text"
-                    value={nome}
-                    onChange={onChangeMusicaNome}/>
-                <br/>
-                Duração:
-                <input 
-                    type="text"
-                    value={duracao}
-                    onChange={onChangeMusicaDuracao}/>
-                <br/>
+                <p>
+                    <label>Música: </label>
+                    <input 
+                        type="text"
+                        value={nome}
+                        onChange={onChangeMusicaNome}/>
+                    <br/>
+                    <label>Duração: </label>
+                    <input 
+                        type="text"
+                        value={duracao}
+                        onChange={onChangeMusicaDuracao}/>
+                </p>
                 <button onClick={adicionarMusica}>Adicionar</button>
                 <button onClick={alterarMusica}>Alterar</button>
                 <button onClick={excluirMusica}>Excluir</button>

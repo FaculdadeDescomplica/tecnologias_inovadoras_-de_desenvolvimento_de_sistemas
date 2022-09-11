@@ -49,10 +49,11 @@ li {
 	border-color: black;
 	border-style: solid;
 	border-width: 1px;
+	font-size: large;
 }
 
 body {
-	font-family: sans-serif;
+	font-family: 'Roboto', sans-serif;
 	padding: 3em;
 }
 
@@ -62,27 +63,15 @@ body {
 	margin-right: 1.5em;
 }
 
-.context-menu .react-list-select {
-	padding: 0.3em 0;
-}
-.context-menu .react-list-select--item {
-	font-size: 0.8125em;
+label {
+	font-size: large
 }
 
-.artista {
-	padding: 0.5em;
-	font-size: 0.675em;
-	color: #999;
+input {
+	font-size: large;
 }
 
-.album {
-	padding: 0.5em;
-	font-size: 0.675em;
-	color: #999;
-}
-
-.musica {
-	padding: 0.5em;
-	font-size: 0.675em;
-	color: #999;
+button {
+	font-size: large;
+	font-weight: bold;
 }

@@ -75,7 +75,7 @@ const ListaAlbuns = ({ idArtista, handleAlbum }) => {
 
     return (
         <div id="album">
-            <h3>Albuns</h3>
+            <h1>Albuns</h1>
             {loading && <p>Carregando albuns...</p>}
             <ul>
                 {albuns && albuns.map((album) => (
@@ -87,18 +87,19 @@ const ListaAlbuns = ({ idArtista, handleAlbum }) => {
             </ul>
             <br/>
             <div id="editarAlbum">
-                Album: 
-                <input 
-                    type="text"
-                    value={nome}
-                    onChange={onChangeAlbumNome}/>
-                <br/>
-                Ano:
-                <input 
-                    type="text"
-                    value={ano}
-                    onChange={onChangeAlbumAno}/>
-                <br/>
+                <p>
+                    <label>Album: </label>
+                    <input 
+                        type="text"
+                        value={nome}
+                        onChange={onChangeAlbumNome}/>
+                    <br/>
+                    <label>Ano: </label>
+                    <input 
+                        type="text"
+                        value={ano}
+                        onChange={onChangeAlbumAno}/>
+                </p>
                 <button onClick={adicionarAlbum}>Adicionar</button>
                 <button onClick={alterarAlbum}>Alterar</button>
                 <button onClick={excluirAlbum}>Excluir</button>

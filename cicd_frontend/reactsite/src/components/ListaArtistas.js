@@ -53,7 +53,7 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
 
     return (
         <div id="artista">
-            <h3>Artistas</h3>
+            <h1>Artistas</h1>
             {loading && <p>Carregando artistas...</p>}
             <ul>
                 {artistas && artistas.map((artista) => (
@@ -64,12 +64,13 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
             </ul>
             <br/>
             <div id="editarArtista">
-                Artista: 
-                <input 
-                    type="text"
-                    value={nome}
-                    onChange={onChangeArtistaNome}/>
-                <br/>
+                <p>
+                    <label>Artista: </label>
+                    <input 
+                        type="text"
+                        value={nome}
+                        onChange={onChangeArtistaNome}/>
+                </p>
                 <button onClick={adicionarArtista}>Adicionar</button>
                 <button onClick={alterarArtista}>Alterar</button>
                 <button onClick={excluirArtista}>Excluir</button>
