@@ -4,29 +4,28 @@ import { useFetch } from "../hooks/useFetch";
 const ListaArtistas = ({ handleArtista, handleAlbum }) => {
     const { data: artistas, dataItem: artista, httpConfig, loading } = useFetch("/artistas", null);
     const [nome, setNome] = useState("");
+    const [contador, setContador] = useState(0);
     
     useEffect(() => {
-        const fetchData = async () => {
+        async function fetchData() {
             if (artista !== null) {
                 setNome(artista.nome);
                 handleArtista(artista.id);
-                handleAlbum(null);
-            } else {
-                setNome("");
-                handleArtista(null);
-                handleAlbum(null);
+                mudaAlbum();
             }
         };
 
         fetchData();
-    }, [handleArtista, handleAlbum, artista]);
+    }, [artista]);
 
-    const selecionaArtista = (e) => {
+    const mudaAlbum = () => {
+        setContador(contador + 1);
+        handleAlbum("none" + contador);
+    }
+
+    const selecionarArtista = (e) => {
         httpConfig(null, "GET", e.target.id);
-    };
-
-    const onChangeArtistaNome = (e) => {
-        setNome(e.target.value);
+        mudaAlbum();
     }
 
     const adicionarArtista = () => {
@@ -57,19 +56,24 @@ const ListaArtistas = ({ handleArtista, handleAlbum }) => {
             {loading && <p>Carregando artistas...</p>}
             <ul>
                 {artistas && artistas.map((artista) => (
-                    <li key={artista.id} id={artista.id} onClick={selecionaArtista}>
+                    <li key={artista.id} id={artista.id} onClick={selecionarArtista}>
                         {artista.nome}
                     </li>
                 ))}
             </ul>
             <br/>
-            <div id="editarArtista">
+            <div>
                 <p>
-                    <label>Artista: </label>
-                    <input 
-                        type="text"
-                        value={nome}
-                        onChange={onChangeArtistaNome}/>
+                    <label>
+                        <span>Artista: </span>
+                        <input 
+                            name="artista"
+                            placeholder="Digite o nome do artista"
+                            type="text"
+                            value={nome}
+                            onChange={(e) => setNome(e.target.value)}/>
+                    </label>
+                    
                 </p>
                 <button onClick={adicionarArtista}>Adicionar</button>
                 <button onClick={alterarArtista}>Alterar</button>

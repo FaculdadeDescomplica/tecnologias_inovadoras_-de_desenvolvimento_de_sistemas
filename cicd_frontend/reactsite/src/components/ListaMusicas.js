@@ -7,44 +7,21 @@ const ListaMusicas = ({ idAlbum }) => {
     const [duracao, setDuracao] = useState("");
     
     useEffect(() => {
-        const fetchData = async () => {
-            console.log(musicas);
-            if (musicas === null || musicas.length === 0) {
-                setNome("");
-                setDuracao("");
-            }
-        };
-
-        fetchData();
-    }, [musicas]);
-
+        setNome("");
+        setDuracao("");
+    }, [idAlbum]);
+    
     useEffect(() => {
-        const fetchData = async () => {
-            console.log(musica);
+        async function fetchData() {
             if (musica !== null) {
                 setNome(musica.nome);
                 setDuracao(musica.duracao);
-            } else {
-                setNome("");
-                setDuracao("");
             }
         };
 
         fetchData();
     }, [musica]);
-
-    const selecionaMusica = (e) => {
-        httpConfig(null, "GET", e.target.id);
-    };
-
-    const onChangeMusicaNome = (e) => {
-        setNome(e.target.value);
-    }
-
-    const onChangeMusicaDuracao = (e) => {
-        setDuracao(e.target.value);
-    }
-
+    
     const adicionarMusica = () => {
         const novaMusica = {
             nome,
@@ -77,26 +54,34 @@ const ListaMusicas = ({ idAlbum }) => {
             {loading && <p>Carregando músicas...</p>}
             <ul>
                 {musicas && musicas.map((musica) => (
-                    <li key={musica.id} id={musica.id} onClick={selecionaMusica}>
+                    <li key={musica.id} id={musica.id} onClick={(e) => httpConfig(null, "GET", e.target.id)}>
                         {musica.nome}<br/>
                         Duração: {musica.duracao}
                     </li>
                 ))}
             </ul>
             <br/>
-            <div id="editarMusica">
+            <div>
                 <p>
-                    <label>Música: </label>
-                    <input 
-                        type="text"
-                        value={nome}
-                        onChange={onChangeMusicaNome}/>
+                    <label>
+                        <span>Música: </span>
+                        <input 
+                            name="musica"
+                            placeholder="Digite o nome da música"
+                            type="text"
+                            value={nome}
+                            onChange={(e) => setNome(e.target.value)}/>
+                    </label>
                     <br/>
-                    <label>Duração: </label>
-                    <input 
-                        type="text"
-                        value={duracao}
-                        onChange={onChangeMusicaDuracao}/>
+                    <label>
+                        <span>Duração: </span>
+                        <input 
+                            name="duracao"
+                            placeholder="Digite a duração da música"
+                            type="text"
+                            value={duracao}
+                            onChange={(e) => setDuracao(e.target.value)}/>
+                    </label>
                 </p>
                 <button onClick={adicionarMusica}>Adicionar</button>
                 <button onClick={alterarMusica}>Alterar</button>

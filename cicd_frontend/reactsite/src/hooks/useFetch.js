@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SpringApiUrl from '../api/SpringApiUrl';
 
 export const useFetch = (rota, queryParam) => {
-  const [url, setUrl] = useState();
+  const [url, setUrl] = useState(null);
   const [data, setData] = useState(null);
   const [dataItem, setDataItem] = useState(null);
 
@@ -33,7 +33,6 @@ export const useFetch = (rota, queryParam) => {
       setMethod("GET");
       setItemId(id);
     } else if (method === "PUT") {
-      console.log(data);
       setConfig({
         method: "PUT",
         headers: {
@@ -58,18 +57,17 @@ export const useFetch = (rota, queryParam) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       setLoading(true);
 
       try {
-        if (queryParam !== null)
-          if (!queryParam.includes("null"))
+        if (queryParam !== null) {
+          if (!queryParam.includes("none"))
             setUrl(SpringApiUrl(rota + queryParam));
           else
             setUrl(null);
-        else
+        } else
           setUrl(SpringApiUrl(rota));
-        
         if (url !== null) {
           const res = await fetch(url);
           const status = await res.status;
@@ -77,7 +75,8 @@ export const useFetch = (rota, queryParam) => {
           
           if (status === 200)
             setData(json);
-        }
+        } else
+          setData(null);
       } catch (error) {
         console.log(error.message);
         setData(null);
@@ -91,7 +90,7 @@ export const useFetch = (rota, queryParam) => {
   }, [rota, queryParam, url, callFetch]);
   
   useEffect(() => {
-    const httpRequest = async () => {
+    async function httpRequest() {
       setLoading(true);
 
       try {
@@ -146,7 +145,7 @@ export const useFetch = (rota, queryParam) => {
     };
     
     httpRequest();
-  }, [itemId, method, rota, config]);
+  }, [itemId, method, rota, queryParam, config]);
 
   return { data, dataItem, httpConfig, loading };
 };

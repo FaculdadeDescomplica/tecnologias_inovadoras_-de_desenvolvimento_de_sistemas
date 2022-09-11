@@ -3,48 +3,31 @@ import { useFetch } from "../hooks/useFetch";
 
 const ListaAlbuns = ({ idArtista, handleAlbum }) => {
     const { data: albuns, dataItem: album, httpConfig, loading } = useFetch("/albuns", "?idArtista=" + idArtista);
-    const [nome, setNome] = useState("");
-    const [ano, setAno] = useState("");
+    const [nome, setNome] = useState();
+    const [ano, setAno] = useState();
+    const [contador, setContador] = useState(0);
     
     useEffect(() => {
-        const fetchData = async () => {
-            if (albuns === null || albuns.length === 0) {
-                setNome("");
-                setAno("");
-            }
-            
-            handleAlbum(null);
-        };
-
-        fetchData();
-    }, [idArtista, handleAlbum, albuns]);
+        setNome("");
+        setAno("");
+        setContador(contador + 1);
+        handleAlbum("none" + contador);
+    }, [idArtista]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        async function  fetchData() {
             if (album !== null) {
                 setNome(album.nome);
                 setAno(album.ano);
-                handleAlbum(album.id);
-            } else {
-                setNome("");
-                setAno("");
-                handleAlbum(null);
             }
         };
 
         fetchData();
-    }, [handleAlbum, album]);
+    }, [album]);
 
     const selecionaAlbum = (e) => {
         httpConfig(null, "GET", e.target.id);
-    };
-
-    const onChangeAlbumNome = (e) => {
-        setNome(e.target.value);
-    }
-
-    const onChangeAlbumAno = (e) => {
-        setAno(e.target.value);
+        handleAlbum(e.target.id);
     }
 
     const adicionarAlbum = () => {
@@ -86,19 +69,27 @@ const ListaAlbuns = ({ idArtista, handleAlbum }) => {
                 ))}
             </ul>
             <br/>
-            <div id="editarAlbum">
+            <div>
                 <p>
-                    <label>Album: </label>
-                    <input 
-                        type="text"
-                        value={nome}
-                        onChange={onChangeAlbumNome}/>
+                    <label>
+                        <span>Album: </span>
+                        <input 
+                            name="album"
+                            placeholder="Digite o nome do album"
+                            type="text"
+                            value={nome}
+                            onChange={(e) => setNome(e.target.value)}/>
+                    </label>
                     <br/>
-                    <label>Ano: </label>
-                    <input 
-                        type="text"
-                        value={ano}
-                        onChange={onChangeAlbumAno}/>
+                    <label>
+                        <span>Ano: </span>
+                        <input 
+                            name="ano"
+                            placeholder="Digite o ano do album"
+                            type="text"
+                            value={ano}
+                            onChange={(e) => setAno(e.target.value)}/>
+                    </label>
                 </p>
                 <button onClick={adicionarAlbum}>Adicionar</button>
                 <button onClick={alterarAlbum}>Alterar</button>
