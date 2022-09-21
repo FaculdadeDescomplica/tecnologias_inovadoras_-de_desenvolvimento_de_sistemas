@@ -1,8 +1,8 @@
 variables:
     IMAGEM_ORACLE: oracle/database:18.4.0-xe
     BIND_DE_PORTA: 3306:3306
-    PASTA_ORIGEM_VOLUME: /D/docker/volumes/oracle/oradata
-    PASTA_ORIGEM_VOLUME_SETUP: /D/docker/volumes/oracle/setup
+    PASTA_ORIGEM_VOLUME: /C/docker/volumes/oracle/oradata
+    PASTA_ORIGEM_VOLUME_SETUP: /C/docker/volumes/oracle/setup
     NOME_DA_REDE: MinhaRede
     NOME_DO_CONTAINER: MeuOracle
     CONTAINER_ATIVO: falso

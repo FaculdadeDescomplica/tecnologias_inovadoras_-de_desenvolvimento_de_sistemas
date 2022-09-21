@@ -1,0 +1,16 @@
+variables:
+    IMAGEM_MYSQL: mysql:latest
+    BIND_DE_PORTA: 3306:3306
+    PASTA_ORIGEM_VOLUME: /C/docker/volumes/mysql
+    NOME_DA_REDE: MinhaRede
+    NOME_DO_CONTAINER: MeuMySQL
+
+stages:
+    - deploy
+
+Implantacao_MySQL:
+    stage: deploy
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -v $PASTA_ORIGEM_VOLUME:/var/lib/mysql -p $BIND_DE_PORTA -e MYSQL_ROOT_PASSWORD=MinhaSenha -e MYSQL_USER=MeuUsuario -e MYSQL_PASSWORD=MinhaSenha -d $IMAGEM_MYSQL
