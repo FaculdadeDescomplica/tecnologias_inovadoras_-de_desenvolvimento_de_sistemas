@@ -1,42 +1,39 @@
 variables:
     APP_PATH: reactsite
     DOCKER_TAG_NAME: $APP_PATH:latest
-    DOCKER_RELEASE_TAG_NAME: $APP_PATH:$CI_COMMIT_REF_NAME
+    DOCKER_DEVELOP_TAG_NAME: $APP_PATH:$CI_COMMIT_BRANCH
     NOME_DO_CONTAINER: MeuReactSite
-    NOME_DO_CONTAINER_RELEASE: MeuReactSite_$CI_COMMIT_REF_NAME
+    NOME_DO_CONTAINER_DEVELOP: MeuReactSiteDev
     NOME_DA_REDE: MinhaRede
     BIND_DE_PORTA: 3000:3000
-    BIND_DE_PORTA_RELEASE: 3001:3000
+    BIND_DE_PORTA_DEVELOP: 4000:3000
 
 stages:
     - prebuild
     - build
     - deploy
+    - clean
 
-Limpar_Imagem_Release:
+Limpar_Imagem_Develop:
     stage: prebuild
     only:
-      - /^release_[0-9]+(?:.[0-9]+)+$/
+      - develop
     variables:
         GIT_STRATEGY: none
     script: 
-        - docker container stop $(docker container ls -a -f ancestor=$DOCKER_RELEASE_TAG_NAME -q) || FAILED=true
+        - docker container stop $(docker container ls -a -f ancestor=$NOME_DO_CONTAINER_DEVELOP -q) || FAILED=true
         - echo Tentativa de parada de container. Falhou? - $FAILED
         - FAILED=false
-        - docker container rm $(docker container ls -a -f ancestor=$DOCKER_RELEASE_TAG_NAME -q) || FAILED=true
+        - docker container rm $(docker container ls -a -f ancestor=$NOME_DO_CONTAINER_DEVELOP -q) || FAILED=true
         - echo Tentativa de remoção de container. Falhou? - $FAILED 
         - FAILED=false
-        - docker image rm $DOCKER_RELEASE_TAG_NAME || FAILED=true
+        - docker image rm $DOCKER_DEVELOP_TAG_NAME || FAILED=true
         - echo Tentativa de remoção da image. Falhou? - $FAILED
-    environment:
-        name: release
-        action: stop
-    when: manual
 
 Limpar_Imagem:
     stage: prebuild
     only:
-      - develop
+      - /^release_[0-9]+(?:.[0-9]+)+$/
     variables:
         GIT_STRATEGY: none
     script: 
@@ -49,39 +46,56 @@ Limpar_Imagem:
         - docker image rm $DOCKER_TAG_NAME || FAILED=true
         - echo Tentativa de remoção da image. Falhou? - $FAILED
 
-Criar_Imagem_Release:
+Destruir_Container_Develop:
+    stage: clean
+    only: 
+        - develop
+    variables:
+        GIT_STRATEGY: none
+    script: 
+        - docker container stop $(docker container ls -a -f ancestor=$DOCKER_DEVELOP_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de parada de container. Falhou? - $FAILED
+        - FAILED=false
+        - docker container rm $(docker container ls -a -f ancestor=$DOCKER_DEVELOP_TAG_NAME -q) || FAILED=true
+        - echo Tentativa de remoção de container. Falhou? - $FAILED 
+    environment:
+        name: develop
+        action: stop
+    when: manual
+
+Criar_Imagem_Develop:
     stage: build
     only:
-      - /^release_[0-9]+(?:.[0-9]+)+$/
+      - develop
     script:
-        - docker build --no-cache -t $DOCKER_RELEASE_TAG_NAME ./$APP_PATH
+        - docker build --no-cache -t $DOCKER_DEVELOP_TAG_NAME ./$APP_PATH
 
 Criar_Imagem:
     stage: build
     only:
-      - develop
+      - /^release_[0-9]+(?:.[0-9]+)+$/
     script:
         - docker build --no-cache -t $DOCKER_TAG_NAME ./$APP_PATH
 
-Criar_Container_Release:
+Criar_Container_Develop:
     stage: deploy
     only:
-      - /^release_[0-9]+(?:.[0-9]+)+$/
+      - develop
     variables:
         GIT_STRATEGY: none
     script:
-        - docker run --name $NOME_DO_CONTAINER_RELEASE --network $NOME_DA_REDE -p $BIND_DE_PORTA_RELEASE -d $DOCKER_RELEASE_TAG_NAME
+        - docker run --name $NOME_DO_CONTAINER_DEVELOP --network $NOME_DA_REDE -p $BIND_DE_PORTA_DEVELOP -d $DOCKER_DEVELOP_TAG_NAME
     environment:
-        name: release
-        on_stop: Limpar_Imagem_Release
+        name: develop
+        on_stop: Destruir_Container_Develop
 
 Criar_Container:
     stage: deploy
     only:
-      - develop
+      - /^release_[0-9]+(?:.[0-9]+)+$/
     variables:
         GIT_STRATEGY: none
     script:
         - docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -p $BIND_DE_PORTA -d $DOCKER_TAG_NAME
     environment:
-        name: develop
+        name: release
