@@ -42,4 +42,4 @@ Criar_Container:
     script:
         - docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -p $BIND_DE_PORTA -d $DOCKER_TAG_NAME
     environment:
-        name: release
+        name: prod
