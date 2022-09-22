@@ -1,19 +1,38 @@
 variables:
     APP_PATH: reactsite
     DOCKER_TAG_NAME: $APP_PATH:latest
+    DOCKER_DEVELOP_TAG_NAME: $APP_PATH:$CI_COMMIT_BRANCH
     NOME_DO_CONTAINER: MeuReactSite
+    NOME_DO_CONTAINER_DEVELOP: MeuReactSiteDev
     NOME_DA_REDE: MinhaRede
     BIND_DE_PORTA: 3000:3000
+    BIND_DE_PORTA_DEVELOP: 4000:3000
 
 stages:
     - prebuild
     - build
     - deploy
 
-Limpar_Imagem:
+Limpar_Imagem_Develop:
     stage: prebuild
     only:
       - develop
+    variables:
+        GIT_STRATEGY: none
+    script: 
+        - docker container stop $(docker container ls -a -f ancestor=$NOME_DO_CONTAINER_DEVELOP -q) || FAILED=true
+        - echo Tentativa de parada de container. Falhou? - $FAILED
+        - FAILED=false
+        - docker container rm $(docker container ls -a -f ancestor=$NOME_DO_CONTAINER_DEVELOP -q) || FAILED=true
+        - echo Tentativa de remoção de container. Falhou? - $FAILED 
+        - FAILED=false
+        - docker image rm $DOCKER_DEVELOP_TAG_NAME || FAILED=true
+        - echo Tentativa de remoção da image. Falhou? - $FAILED
+
+Limpar_Imagem:
+    stage: prebuild
+    only:
+      - /^release_[0-9]+(?:.[0-9]+)+$/
     variables:
         GIT_STRATEGY: none
     script: 
@@ -26,20 +45,38 @@ Limpar_Imagem:
         - docker image rm $DOCKER_TAG_NAME || FAILED=true
         - echo Tentativa de remoção da image. Falhou? - $FAILED
 
-Criar_Imagem:
+Criar_Imagem_Develop:
     stage: build
     only:
       - develop
     script:
+        - docker build --no-cache -t $DOCKER_DEVELOP_TAG_NAME ./$APP_PATH
+
+Criar_Imagem:
+    stage: build
+    only:
+      - /^release_[0-9]+(?:.[0-9]+)+$/
+    script:
         - docker build --no-cache -t $DOCKER_TAG_NAME ./$APP_PATH
 
-Criar_Container:
+Criar_Container_Develop:
     stage: deploy
     only:
       - develop
     variables:
         GIT_STRATEGY: none
     script:
-        - docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -p $BIND_DE_PORTA -d $DOCKER_TAG_NAME
+        - docker run --name $NOME_DO_CONTAINER_DEVELOP --network $NOME_DA_REDE -p $BIND_DE_PORTA_DEVELOP -d $DOCKER_DEVELOP_TAG_NAME
     environment:
         name: develop
+
+Criar_Container:
+    stage: deploy
+    only:
+      - /^release_[0-9]+(?:.[0-9]+)+$/
+    variables:
+        GIT_STRATEGY: none
+    script:
+        - docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -p $BIND_DE_PORTA -d $DOCKER_TAG_NAME
+    environment:
+        name: release
