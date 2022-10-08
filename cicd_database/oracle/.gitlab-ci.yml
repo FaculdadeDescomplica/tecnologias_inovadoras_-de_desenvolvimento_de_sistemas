@@ -1,6 +1,6 @@
 variables:
     IMAGEM_ORACLE: oracle/database:18.4.0-xe
-    BIND_DE_PORTA: 3306:3306
+    BIND_DE_PORTA: 1521:1521
     PASTA_ORIGEM_VOLUME: /D/docker/volumes/oracle/oradata
     PASTA_ORIGEM_VOLUME_SETUP: /D/docker/volumes/oracle/setup
     NOME_DA_REDE: MinhaRede
@@ -53,7 +53,7 @@ Implantacao_Oracle:
         GIT_STRATEGY: none
     script:
         - if [[ $CONTAINER_EXISTE = "falso" ]]; then
-        -   docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -v $PASTA_ORIGEM_VOLUME:/opt/oracle/oradata -v $PASTA_ORIGEM_VOLUME_SETUP:/opt/oracle/scripts/setup -p 1521:1521 -p 5500:5500 -e ORACLE_PWD=$oraclesyspassword -e ORACLE_CHARACTERSET=AL32UTF8 -d $IMAGEM_ORACLE
+        -   docker run --name $NOME_DO_CONTAINER --network $NOME_DA_REDE -v $PASTA_ORIGEM_VOLUME:/opt/oracle/oradata -v $PASTA_ORIGEM_VOLUME_SETUP:/opt/oracle/scripts/setup -p $BIND_DE_PORTA -p 5500:5500 -e ORACLE_PWD=$oraclesyspassword -e ORACLE_CHARACTERSET=AL32UTF8 -d $IMAGEM_ORACLE
         -   else echo "Container não precisa ser criado"
         - fi
 

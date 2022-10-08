@@ -4,7 +4,7 @@ stages:
 
 Teste_Imagem:
     stage: teste
-    image: ubuntu:21.10
+    image: ubuntu:18.04
     script:
         - apt-get update
         - apt-get install -y nginx
