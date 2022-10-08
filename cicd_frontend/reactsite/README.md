@@ -62,16 +62,16 @@ A exemplo:
 
 Vamos olhar cada linha deste Dockerfile:
 
-FROM node:slim: esta instrução diz a imagem do Docker que será baixada e utilizada para fazer a compilação. Como estamos usando um projeto React com dependências do Node.js, temos que usar uma imagem que possua o Node.js
-WORKDIR /app: aqui definimos que a pasta app será a pasta para o Docker "olhar" para executar os demais comandos
-ENV PATH /app/node_modules/.bin:$PATH: inclusão doda pasta app/node_modules/.bin no PATH, que é uma variável de ambiente do sistema operacional
-COPY ./src /app/src: cópia dos arquivos de código-fonte do projeto para a pasta /app/src
-COPY ./public /app/public: cópia dos arquivos públicos como imagens, ícones e o index.html para a pasta /app/public
-COPY package.json /app/package.json: cópia do arquivo package.json que possui todas as bibliotecas que o site é dependente para a pasta /app
-RUN npm install: execução do comando npm install, que baixa todas as dependências (mencionadas no arquvo package.json)
-RUN npm install react-scripts@3.3.1 -g: instala um pacote específico para rodar o projeto
-EXPOSE 3000: indica que será exposta a porta 3000 para conseguirmos interagir com a aplicação
-CMD ["npm", "start"]: indica que o comando que será executado será o npm start para subir a aplicação
+- FROM node:slim: esta instrução diz a imagem do Docker que será baixada e utilizada para fazer a compilação. Como estamos usando um projeto React com dependências do Node.js, temos que usar uma imagem que possua o Node.js
+- WORKDIR /app: aqui definimos que a pasta app será a pasta para o Docker "olhar" para executar os demais comandos
+- ENV PATH /app/node_modules/.bin:$PATH: inclusão doda pasta app/node_modules/.bin no PATH, que é uma variável de ambiente do sistema operacional
+- COPY ./src /app/src: cópia dos arquivos de código-fonte do projeto para a pasta /app/src
+- COPY ./public /app/public: cópia dos arquivos públicos como imagens, ícones e o index.html para a pasta /app/public
+- COPY package.json /app/package.json: cópia do arquivo package.json que possui todas as bibliotecas que o site é dependente para a pasta /app
+- RUN npm install: execução do comando npm install, que baixa todas as dependências (mencionadas no arquvo package.json)
+- RUN npm install react-scripts@3.3.1 -g: instala um pacote específico para rodar o projeto
+- EXPOSE 3000: indica que será exposta a porta 3000 para conseguirmos interagir com a aplicação
+- CMD ["npm", "start"]: indica que o comando que será executado será o npm start para subir a aplicação
 
 Agora precisamos abrir o Terminal do Git Bash ou o Promt de Comandos do Windows e executar a seguinte instrução:
 
