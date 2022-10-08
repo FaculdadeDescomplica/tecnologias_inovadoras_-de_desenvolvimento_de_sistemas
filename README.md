@@ -30,7 +30,7 @@ A exemplo:
 
 Depois de copiar a URL deste reposiório, abra o Git Bash e faça a clonagem do repositório, o comando é este:
 
-`git clone https://gitlab.com/everton.juniti/descomplica.git`
+`git clone https://github.com/FaculdadeDescomplica/tecnologias_inovadoras_-de_desenvolvimento_de_sistemas.git`
 
 A exemplo:
 
@@ -38,7 +38,7 @@ A exemplo:
 
 ## Projetos
 
-### React + Java SpringBoot + Python FastAPI + Oracle + MySQL
+### React + Java SpringBoot + Oracle + MySQL
 
 Pastas que fazem parte do projeto:
 
