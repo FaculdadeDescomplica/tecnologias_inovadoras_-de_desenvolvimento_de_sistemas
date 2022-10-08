@@ -1,7 +1,7 @@
 variables:
     IMAGEM_MYSQL: mysql:latest
     BIND_DE_PORTA: 3306:3306
-    PASTA_ORIGEM_VOLUME: /D/docker/volumes/mysql
+    PASTA_ORIGEM_VOLUME: /C/docker/volumes/mysql
     NOME_DA_REDE: MinhaRede
     NOME_DO_CONTAINER: MeuMySQL
     CONTAINER_ATIVO: falso
